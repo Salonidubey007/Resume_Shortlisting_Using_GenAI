@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Profile</title>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 1060px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid #f0f0f0;
+    }
+    .card-header h2 {
+      color: #12239E;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header h2::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .btn-back {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-back:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn-logout {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 999;
+      transition: 0.3s;
+    }
+    .btn-logout:hover { background: #c82333; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #6bcf7f;
+    }
+    .summary-item { display: flex; flex-direction: column; gap: 4px; }
+    .summary-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #7f8c8d; }
+    .summary-value { font-size: 15px; font-weight: 600; color: #2c3e50; }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .btn-add {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn-add:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 13px;
+    }
+    thead { background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%); color: white; }
+    th {
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 11px;
+    }
+    th:first-child { border-radius: 8px 0 0 0; }
+    th:last-child  { border-radius: 0 8px 0 0; }
+
+    /* last th is the hidden actions column — zero width */
+    th.th-actions { width: 0; padding: 0; }
+
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #2c3e50;
+      vertical-align: middle;
+    }
+    td.td-actions {
+      width: 0;
+      padding: 0;
+      overflow: visible;
+      white-space: nowrap;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tbody tr { transition: background 0.2s; }
+    tbody tr:hover { background: rgba(107, 207, 127, 0.08); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* action pill — sits outside the row to the right, hidden by default */
+    .row-actions {
+      display: inline-flex;
+      gap: 2px;
+      opacity: 0;
+      pointer-events: none;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 3px 5px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      vertical-align: middle;
+      transition: opacity 0.15s;
+      margin-left: 6px;
+    }
+    tbody tr:hover .row-actions,
+    .row-actions.always-show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .btn-icon {
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 5px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      transition: background 0.15s;
+    }
+    .btn-icon.edit   { color: #0070AD; }
+    .btn-icon.delete { color: #dc3545; }
+    .btn-icon.save   { color: #27d383; }
+    .btn-icon.cancel { color: #adb5bd; }
+    .btn-icon:hover  { background: #f0f0f0; }
+
+    td input[type="text"], td input[type="date"], td select {
+      width: 100%;
+      padding: 4px 7px;
+      border: 2px solid #6bcf7f;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #f8fff8;
+      outline: none;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .badge-rejected { background: #f8d7da; color: #721c24; }
+    .badge-accepted { background: #d1e7dd; color: #0f5132; }
+    .badge-pending  { background: #fff3cd; color: #856404; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 14px;
+      padding: 32px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .modal h3 { color: #12239E; margin-bottom: 12px; }
+    .modal p  { color: #555; margin-bottom: 24px; font-size: 14px; }
+    .modal-btns { display: flex; gap: 12px; justify-content: center; }
+    .btn-confirm-del    { padding: 10px 24px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .btn-confirm-del:hover { background: #c82333; }
+    .btn-confirm-cancel { padding: 10px 24px; background: #adb5bd; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .btn-confirm-cancel:hover { background: #868e96; }
+  </style>
+</head>
+<body>
+  <button class="btn-logout" onclick="logout()">Logout</button>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Employee Profile</h2>
+      <button class="btn-back" onclick="location.href='/employee-details'">← Back</button>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <span class="summary-label">GG ID</span>
+        <span class="summary-value">345866</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Name</span>
+        <span class="summary-value">XYZ</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Grade</span>
+        <span class="summary-value">C1</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Location</span>
+        <span class="summary-value">Chennai</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Profile Propositions</div>
+      <button class="btn-add" id="btnAddRow" onclick="addRow()">+ Add Row</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Account Name</th>
+          <th>Req ID</th>
+          <th>Proposed Date</th>
+          <th>Status</th>
+          <th>Release Date</th>
+          <th>Feedback</th>
+          <th class="th-actions"></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <h3>Confirm Deletion</h3>
+      <p>Are you sure you want to delete this row? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-confirm-del" onclick="executeDelete()">Yes, Delete</button>
+        <button class="btn-confirm-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MAX_ROWS = 10;
+    const GG_ID   = '345866';
+    const STATUSES = ['Pending', 'Accepted', 'Rejected'];
+    let rowToDelete = null;
+
+    // ---- helpers ----
+    function badgeHtml(status) {
+      const cls = status === 'Accepted' ? 'badge-accepted'
+                : status === 'Rejected' ? 'badge-rejected' : 'badge-pending';
+      return `<span class="badge ${cls}">${status}</span>`;
+    }
+    function updateSerialNumbers() {
+      document.querySelectorAll('#tableBody tr').forEach((tr, i) => tr.cells[0].textContent = i + 1);
+    }
+    function updateAddBtn() {
+      document.getElementById('btnAddRow').disabled =
+        document.querySelectorAll('#tableBody tr').length >= MAX_ROWS;
+    }
+
+    // ---- persistence ----
+    function saveRows() {
+      const rows = [];
+      document.querySelectorAll('#tableBody tr').forEach(tr => {
+        if (tr.dataset.editing) return;
+        rows.push({
+          account:  tr.cells[1].textContent.trim(),
+          reqId:    tr.cells[2].textContent.trim(),
+          propDate: tr.cells[3].textContent.trim(),
+          status:   tr.cells[4].querySelector('.badge')?.textContent.trim() || 'Pending',
+          relDate:  tr.cells[5].textContent.trim(),
+          feedback: tr.cells[6].textContent.trim()
+        });
+      });
+      localStorage.setItem(`emp_${GG_ID}_rows`, JSON.stringify(rows));
+      syncToDetails();
+    }
+
+    function loadRows() {
+      const saved = localStorage.getItem(`emp_${GG_ID}_rows`);
+      const rows  = saved ? JSON.parse(saved) : [
+        { account:'HSBC',    reqId:'UIX267', propDate:'—', status:'Rejected', relDate:'—', feedback:'—' },
+        { account:'Barclays',reqId:'YH204H', propDate:'—', status:'Rejected', relDate:'—', feedback:'—' }
+      ];
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      rows.forEach((r, i) => tbody.appendChild(buildViewRow(r, i + 1)));
+      updateAddBtn();
+    }
+
+    function syncToDetails() {
+      let allocated = false;
+      let releaseDate = '—';
+      document.querySelectorAll('#tableBody tr').forEach(tr => {
+        const s = tr.cells[4]?.querySelector('.badge');
+        if (s && s.textContent.trim() === 'Accepted') {
+          allocated = true;
+          releaseDate = tr.cells[5]?.textContent.trim() || '—';
+        }
+      });
+      localStorage.setItem(`emp_${GG_ID}_status`,      allocated ? 'Allocated' : 'Bench');
+      localStorage.setItem(`emp_${GG_ID}_releaseDate`, allocated ? releaseDate : '—');
+    }
+
+    // ---- build rows ----
+    function buildViewRow(r, sn) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${sn}</td>
+        <td>${r.account}</td>
+        <td>${r.reqId}</td>
+        <td>${r.propDate}</td>
+        <td>${badgeHtml(r.status)}</td>
+        <td>${r.relDate}</td>
+        <td>${r.feedback}</td>
+        <td class="td-actions">
+          <div class="row-actions">
+            <button class="btn-icon edit"   title="Edit"   onclick="editRow(this.closest('tr'))">&#9998;</button>
+            <button class="btn-icon delete" title="Delete" onclick="confirmDelete(this.closest('tr'))">&#128465;</button>
+          </div>
+        </td>
+      `;
+      return tr;
+    }
+
+    function buildEditRow(r, sn, isNew) {
+      const tr = document.createElement('tr');
+      tr.dataset.editing = '1';
+      tr.innerHTML = `
+        <td>${sn}</td>
+        <td><input type="text"  value="${r.account  === '—' ? '' : r.account}"  placeholder="Account"></td>
+        <td><input type="text"  value="${r.reqId    === '—' ? '' : r.reqId}"    placeholder="Req ID"></td>
+        <td><input type="date"  value="${r.propDate === '—' ? '' : r.propDate}"></td>
+        <td><select>${STATUSES.map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}</select></td>
+        <td><input type="date"  value="${r.relDate  === '—' ? '' : r.relDate}"></td>
+        <td><input type="text"  value="${r.feedback === '—' ? '' : r.feedback}" placeholder="Feedback"></td>
+        <td class="td-actions">
+          <div class="row-actions always-show">
+            <button class="btn-icon save"   title="Save"   onclick="saveRow(this.closest('tr'))">&#10003;</button>
+            <button class="btn-icon cancel" title="Cancel" onclick="${isNew ? 'removeNewRow' : 'cancelEdit'}(this.closest('tr'))">&#10005;</button>
+          </div>
+        </td>
+      `;
+      tr.dataset.orig = JSON.stringify(r);
+      return tr;
+    }
+
+    // ---- edit / save / cancel ----
+    function editRow(tr) {
+      const cells = tr.cells;
+      const r = {
+        account:  cells[1].textContent.trim(),
+        reqId:    cells[2].textContent.trim(),
+        propDate: cells[3].textContent.trim(),
+        status:   cells[4].querySelector('.badge')?.textContent.trim() || 'Pending',
+        relDate:  cells[5].textContent.trim(),
+        feedback: cells[6].textContent.trim()
+      };
+      const sn  = cells[0].textContent;
+      const newTr = buildEditRow(r, sn, false);
+      tr.replaceWith(newTr);
+    }
+
+    function saveRow(tr) {
+      const cells = tr.cells;
+      const r = {
+        account:  cells[1].querySelector('input').value.trim()  || '—',
+        reqId:    cells[2].querySelector('input').value.trim()  || '—',
+        propDate: cells[3].querySelector('input').value         || '—',
+        status:   cells[4].querySelector('select').value,
+        relDate:  cells[5].querySelector('input').value         || '—',
+        feedback: cells[6].querySelector('input').value.trim()  || '—'
+      };
+      const sn    = cells[0].textContent;
+      const newTr = buildViewRow(r, sn);
+      tr.replaceWith(newTr);
+      saveRows();
+    }
+
+    function cancelEdit(tr) {
+      const r  = JSON.parse(tr.dataset.orig);
+      const sn = tr.cells[0].textContent;
+      tr.replaceWith(buildViewRow(r, sn));
+    }
+
+    function removeNewRow(tr) {
+      tr.remove();
+      updateSerialNumbers();
+      updateAddBtn();
+    }
+
+    // ---- delete ----
+    function confirmDelete(tr) {
+      rowToDelete = tr;
+      document.getElementById('deleteModal').classList.add('show');
+    }
+    function executeDelete() {
+      if (rowToDelete) {
+        rowToDelete.remove();
+        rowToDelete = null;
+        updateSerialNumbers();
+        updateAddBtn();
+        saveRows();
+      }
+      closeModal();
+    }
+    function closeModal() {
+      document.getElementById('deleteModal').classList.remove('show');
+      rowToDelete = null;
+    }
+
+    // ---- add row ----
+    function addRow() {
+      const tbody = document.getElementById('tableBody');
+      if (tbody.rows.length >= MAX_ROWS) return;
+      const sn  = tbody.rows.length + 1;
+      const r   = { account:'', reqId:'', propDate:'', status:'Pending', relDate:'', feedback:'' };
+      const tr  = buildEditRow(r, sn, true);
+      tbody.appendChild(tr);
+      updateAddBtn();
+    }
+
+    async function logout() {
+      const res  = await fetch('/api/logout', { method: 'POST' });
+      const data = await res.json();
+      window.location.href = data.redirect || '/';
+    }
+
+    loadRows();
+  </script>
+</body>
+</html>

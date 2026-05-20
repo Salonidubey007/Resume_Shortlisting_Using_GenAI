@@ -1,0 +1,9 @@
+python run_terminal.py --resumes
+python run_terminal.py --jd "<jd_filename>"
+python run_terminal.py --score
+
+python run_terminal.py --resumes --jd JD1.pdf --score
+
+python run_terminal.py --resumes --force
+
+python run_terminal.py --score --max-workers 10

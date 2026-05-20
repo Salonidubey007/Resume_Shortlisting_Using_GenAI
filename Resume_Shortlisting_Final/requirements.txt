@@ -1,0 +1,11 @@
+flask
+werkzeug
+requests
+python-docx
+PyPDF2
+python-pptx
+pandas
+openpyxl
+python-dotenv
+Flask-Limiter
+gunicorn

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    {% if role == 'employee-portal' %}
+      Employee Login
+    {% elif role == 'opsteam' %}
+      OPS Login
+    {% else %}
+      Login
+    {% endif %}
+  </title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      font-family: 'Segoe UI';
+      height: 100vh;
+      padding: 40px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    
+    .card {
+    background: #ffffff;
+    padding: 50px 60px;      /* Increased padding for balance */
+    border-radius: 16px;
+    width: 450px;            /* Slightly wider for breathing room */
+    text-align: left;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #12239E;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select {
+      width: 93.5%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 2px solid #e8e8e8;
+      background: #fafafa;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #6bcf7f;
+      outline: none;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(107, 207, 127, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn.loading {
+      background: #666;
+    }
+
+    .toggle-link {
+      margin-top: 15px;
+      display:block;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      color: #0070AD;
+      font-weight: 600;
+    }
+
+    .toggle-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <button id="backBtn" onclick="window.location.href='/'" style="background:none; border:none; color:#0070AD; font-size:14px; font-weight:600; cursor:pointer; padding:0 0 16px 0; display:flex; align-items:center; gap:6px;">&#8592; Back</button>
+    <h2 id="title">
+      {% if role == 'employee-portal' %}
+        Employee Login
+      {% elif role == 'opsteam' %}
+        OPS Login
+      {% else %}
+        Login
+      {% endif %}
+    </h2>
+
+    <form id="authForm">
+      <input type="hidden" id="role" value="{{ role }}">
+
+      <div id="signupFields" style="display:none;">
+        <label>Full Name</label>
+        <input type="text" id="fullName">
+
+        <label>Email</label>
+        
+        <input type="email" id="email" placeholder="name@example.com">
+
+        <label>Grade</label>
+        <select id="grade">
+          <option value="">Select Grade</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="A3">A3</option>
+          <option value="A4">A4</option>
+          <option value="A5">A5</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+          <option value="C1">C1</option>
+          <option value="C2">C2</option>
+          <option value="D1">D1</option>
+          <option value="D2">D2</option>
+          <option value="E1">E1</option>
+          <option value="E2">E2</option>
+        </select>
+
+        <div id="adminCodeField" style="display:none;">
+          <label>OPS Team Secret Code</label>
+          <input type="password" id="adminCode" placeholder="Enter opsteam secret code">
+        </div>
+      </div>
+      <label>Employee ID</label>
+      <input type="text" id="employeeId">
+
+      <label>Password</label>
+      <input type="password" id="password">
+
+      <div id="authMessage" style="margin-top:12px;padding:10px;border-radius:6px;font-size:14px;min-height:20px;display:none;"></div>
+
+      <button type="submit" class="btn">Continue</button>
+    </form>
+
+    <div class="toggle-link" onclick="toggleSignup()">Don't have an account? Sign up</div>
+    <div class="toggle-link" style="margin-top: 10px;">
+      <a href="/reset-password" style="color: #0070AD; text-decoration: none;">Forgot Password? Reset here</a>
+    </div>
+  </div>
+
+<script>
+let isSignup = false;
+
+// Detect page reload and redirect to main dashboard
+window.addEventListener('load', function() {
+  // Check if this page was loaded due to a reload/refresh
+  if (window.performance && window.performance.getEntriesByType) {
+    const navigation = window.performance.getEntriesByType('navigation')[0];
+    if (navigation && navigation.type === 'reload') {
+      // This was a page reload, redirect to main dashboard
+      window.location.href = '/';
+    }
+  }
+});
+
+function showMessage(message, isError = true) {
+  const messageEl = document.getElementById("authMessage");
+  messageEl.style.display = "block";
+  messageEl.style.backgroundColor = isError ? "#fee" : "#efe";
+  messageEl.style.color = isError ? "#c33" : "#363";
+  messageEl.style.border = `1px solid ${isError ? "#fcc" : "#cfc"}`;
+  messageEl.innerText = message;
+
+  if (isError) {
+    // Also show alert for errors
+    alert(`Error: ${message}`);
+  } else {
+    // Show alert for success messages too
+    alert(message);
+  }
+}
+
+function clearMessage() {
+  const messageEl = document.getElementById("authMessage");
+  messageEl.style.display = "none";
+  messageEl.innerText = "";
+}
+
+function toggleSignup(){
+  isSignup = !isSignup;
+
+  document.getElementById("signupFields").style.display = isSignup ? "block" : "none";
+  document.getElementById("backBtn").style.display = isSignup ? "none" : "flex";
+  
+  const role = document.getElementById("role").value;
+  let loginTitle, signupTitle;
+  
+  if (role === "employee-portal") {
+    loginTitle = "Employee Login";
+    signupTitle = "Employee Sign Up";
+  } else if (role === "opsteam") {
+    loginTitle = "OPS Login";
+    signupTitle = "OPS Sign Up";
+  } else {
+    loginTitle = "Login";
+    signupTitle = "Sign Up";
+  }
+  
+  document.getElementById("title").innerText = isSignup ? signupTitle : loginTitle;
+  document.querySelector(".toggle-link").innerText = isSignup ?
+    "Already have an account? Login" :
+    "Don't have an account? Sign up";
+  clearMessage();
+
+  // Show admin code field only for opsteam signup
+  document.getElementById("adminCodeField").style.display = (isSignup && role === "opsteam") ? "block" : "none";
+
+  // Clear all input fields
+  document.getElementById("fullName").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("employeeId").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("adminCode").value = "";
+}
+
+async function handleAuth(event) {
+  event.preventDefault();
+
+  const submitBtn = document.querySelector('.btn');
+  const originalText = submitBtn.innerText;
+
+  // Show loading state
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Processing...";
+  submitBtn.classList.add('loading');
+
+  clearMessage();
+
+  try {
+    const role = document.getElementById("role").value;
+    const employeeId = document.getElementById("employeeId").value.trim();
+    const password = document.getElementById("password").value;
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const action = isSignup ? "signup" : "login";
+
+    const payload = {
+      action,
+      role,
+      employee_id: employeeId,
+      password
+    };
+
+    if (isSignup) {
+      payload.full_name = fullName;
+      payload.email = email;
+      payload.grade = document.getElementById("grade").value.trim();
+      if (role === "opsteam") {
+        payload.admin_code = document.getElementById("adminCode").value.trim();
+      }
+    }
+
+    const response = await fetch("/api/auth", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      showMessage(result.error || "Authentication failed.");
+      return;
+    }
+
+    if (action === "signup") {
+      showMessage(result.message || "Successful sign up please login.", false);
+      toggleSignup();
+      return;
+    }
+
+    if (result.redirect) {
+      window.location.href = result.redirect;
+    } else {
+      showMessage(result.message || "Login failed.");
+    }
+  } catch (error) {
+    showMessage("Network error. Please try again.");
+    console.error("Auth error:", error);
+  } finally {
+    // Reset button state
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalText;
+    submitBtn.classList.remove('loading');
+  }
+}
+
+const authForm = document.getElementById("authForm");
+authForm.addEventListener("submit", handleAuth);
+</script>
+
+</body>
+</html>

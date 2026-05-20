@@ -1,0 +1,8 @@
+**/.env
+**/storage/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/.tmp_doc_convert/
+*.xlsx
+*.log

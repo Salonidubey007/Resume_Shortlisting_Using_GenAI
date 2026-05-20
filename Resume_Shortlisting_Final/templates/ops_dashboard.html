@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ops Dashboard</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 16px;
+      width: 420px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    h2 { color: #12239E; margin-bottom: 10px; }
+    p  { color: #0070AD; font-weight: 600; margin-bottom: 10px; }
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn-employee-details { background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%); }
+    .btn-admin-tool       { background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%); }
+    .btn-logout {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: auto;
+      padding: 8px 16px;
+      font-size: 14px;
+      background: #dc3545;
+      border-radius: 6px;
+      z-index: 999;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Ops Dashboard</h2>
+    <p>Select an option to continue</p>
+
+    <button class="btn-employee-details" onclick="location.href='/employee-details'">Employee Details</button>
+    <button class="btn-admin-tool"       onclick="location.href='/opsteam'">Admin Tool</button>
+  </div>
+  <button class="btn-logout" onclick="logout()">Logout</button>
+  <script>
+    async function logout() {
+      const res = await fetch('/api/logout', { method: 'POST' });
+      const data = await res.json();
+      window.location.href = data.redirect || '/';
+    }
+  </script>
+</body>
+</html>

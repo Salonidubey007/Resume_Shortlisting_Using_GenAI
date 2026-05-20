@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Profile</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px 50px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+      margin: 0 auto 16px;
+    }
+
+    .card-header h2 {
+      color: #12239E;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-header p {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+    }
+
+    .divider {
+      border: none;
+      border-top: 2px solid #f0f0f0;
+      margin: 24px 0;
+    }
+
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 12px;
+      color: #34495e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .read-only-field {
+      padding: 11px 14px;
+      border: 2px solid #f0f0f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #f8f9fa;
+      color: #7f8c8d;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fafafa;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      color: #2c3e50;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #6bcf7f;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(107,207,127,0.1);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0070AD;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 14px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #0070AD 0%, #12239E 100%);
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: #0070AD;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+
+    <button class="back-btn" onclick="window.location.href='/employee-portal'">&#8592; Back to Portal</button>
+
+    <!-- Profile Header -->
+    <div class="card-header">
+      <div class="avatar" id="avatarInitial">?</div>
+      <h2 id="displayName">Loading...</h2>
+      <p id="displayEmail">—</p>
+      <span class="badge" id="displayGrade">—</span>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Personal Info Section -->
+    <div class="section-title">✏️ Personal Information</div>
+
+    <div class="field-group">
+      <label>Employee ID</label>
+      <div class="read-only-field" id="fieldEmpId">—</div>
+    </div>
+
+    <div class="field-group">
+      <label>Full Name</label>
+      <input type="text" id="fieldFullName" placeholder="Enter full name">
+    </div>
+
+    <div class="field-group">
+      <label>Email</label>
+      <input type="email" id="fieldEmail" placeholder="Enter email">
+    </div>
+
+    <div class="field-group">
+      <label>Grade</label>
+      <select id="fieldGrade">
+        <option value="">Select Grade</option>
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="A3">A3</option>
+        <option value="A4">A4</option>
+        <option value="A5">A5</option>
+        <option value="B1">B1</option>
+        <option value="B2">B2</option>
+        <option value="C1">C1</option>
+        <option value="C2">C2</option>
+        <option value="D1">D1</option>
+        <option value="D2">D2</option>
+        <option value="E1">E1</option>
+        <option value="E2">E2</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" id="btnSaveProfile">Save Changes</button>
+    <button class="btn btn-secondary" onclick="window.location.href='/change-password'">🔒 Change Password</button>
+
+    <div class="message" id="profileMessage"></div>
+
+  </div>
+
+  <script>
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/user');
+        const user = await res.json();
+        document.getElementById('avatarInitial').textContent = (user.full_name || '?')[0].toUpperCase();
+        document.getElementById('displayName').textContent = user.full_name || '—';
+        document.getElementById('displayEmail').textContent = user.email || '—';
+        document.getElementById('displayGrade').textContent = user.grade || '—';
+        document.getElementById('fieldEmpId').textContent = user.employee_id || '—';
+        document.getElementById('fieldFullName').value = user.full_name || '';
+        document.getElementById('fieldEmail').value = user.email || '';
+        document.getElementById('fieldGrade').value = user.grade || '';
+      } catch (e) {
+        showMessage('error', 'Failed to load profile. Please refresh.');
+      }
+    }
+
+    document.getElementById('btnSaveProfile').addEventListener('click', async () => {
+      const full_name = document.getElementById('fieldFullName').value.trim();
+      const email = document.getElementById('fieldEmail').value.trim();
+      const grade = document.getElementById('fieldGrade').value;
+
+      if (!full_name || !email || !grade) {
+        showMessage('error', 'All fields are required.');
+        return;
+      }
+
+      const btn = document.getElementById('btnSaveProfile');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const res = await fetch('/api/profile/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ full_name, email, grade })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showMessage('error', data.error || 'Failed to update profile.');
+        } else {
+          showMessage('success', '✅ Profile updated successfully!');
+          document.getElementById('displayName').textContent = full_name;
+          document.getElementById('displayEmail').textContent = email;
+          document.getElementById('displayGrade').textContent = grade;
+          document.getElementById('avatarInitial').textContent = full_name[0].toUpperCase();
+        }
+      } catch (e) {
+        showMessage('error', 'Network error. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+      }
+    });
+
+    function showMessage(type, text) {
+      const el = document.getElementById('profileMessage');
+      el.className = `message ${type}`;
+      el.textContent = text;
+      el.style.display = 'block';
+      if (type === 'success') setTimeout(() => el.style.display = 'none', 4000);
+    }
+
+    loadUser();
+  </script>
+</body>
+</html>

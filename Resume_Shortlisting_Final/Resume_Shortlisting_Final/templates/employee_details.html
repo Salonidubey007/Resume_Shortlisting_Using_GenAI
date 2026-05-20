@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Details</title>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid #f0f0f0;
+    }
+    .card-header h2 {
+      color: #12239E;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header h2::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .btn-back {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 14px;
+    }
+    thead {
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+    }
+    th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 12px;
+    }
+    th:first-child { border-radius: 8px 0 0 0; }
+    th:last-child  { border-radius: 0 8px 0 0; }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #2c3e50;
+    }
+    tbody tr { transition: background 0.2s; cursor: pointer; }
+    tbody tr:hover { background: rgba(107, 207, 127, 0.15); }
+    tbody tr:last-child td { border-bottom: none; }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .badge-bench     { background: #fff3cd; color: #856404; }
+    .badge-active    { background: #d1e7dd; color: #0f5132; }
+    .badge-allocated { background: #cfe2ff; color: #084298; }
+    .btn-logout {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 999;
+      transition: 0.3s;
+    }
+    .btn-logout:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+  <button class="btn-logout" onclick="logout()">Logout</button>
+  <div class="card">
+    <div class="card-header">
+      <h2>Bench Profiles</h2>
+      <button class="btn-back" onclick="location.href='/ops-dashboard'">← Back</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>SN</th>
+          <th>GG ID</th>
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Release Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="location.href='/employee-profile?gg_id=345866'">
+          <td>1</td>
+          <td>345866</td>
+          <td>XYZ</td>
+          <td id="status-345866"><span class="badge badge-bench">Bench</span></td>
+          <td id="release-345866">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    // sync status from profile page via localStorage
+    function syncFromProfile(ggId) {
+      const status      = localStorage.getItem(`emp_${ggId}_status`);
+      const releaseDate = localStorage.getItem(`emp_${ggId}_releaseDate`);
+      if (status) {
+        const cls = status === 'Allocated' ? 'badge-allocated'
+                  : status === 'Bench'     ? 'badge-bench'
+                  : 'badge-active';
+        const el = document.getElementById(`status-${ggId}`);
+        if (el) el.innerHTML = `<span class="badge ${cls}">${status}</span>`;
+      }
+      if (releaseDate) {
+        const el = document.getElementById(`release-${ggId}`);
+        if (el) el.textContent = releaseDate;
+      }
+    }
+    syncFromProfile('345866');
+
+    async function logout() {
+      const res = await fetch('/api/logout', { method: 'POST' });
+      const data = await res.json();
+      window.location.href = data.redirect || '/';
+    }
+  </script>
+</body>
+</html>

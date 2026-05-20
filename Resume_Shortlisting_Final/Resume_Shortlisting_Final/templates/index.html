@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Resume Shortlisting</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+      color: #2c3e50;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    /* OPTION 1: Minimal white card with thin colored border */
+    .header { 
+      text-align: center; 
+      margin: 0 0 40px;
+      padding: 35px 30px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 2px solid #12239E;
+    }
+    .header h1 { 
+      font-size: 36px; 
+      font-weight: 700;
+      color: #12239E;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .header p { 
+      color: #0070AD;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+    }
+
+    /* OPTION 2: Flat design - simple white, no shadows */
+    /* .header { 
+      text-align: center; 
+      margin: 0 0 40px;
+      padding: 30px 20px;
+      background: #ffffff;
+      border-radius: 0;
+    }
+    .header h1 { 
+      font-size: 36px; 
+      font-weight: 700;
+      color: #12239E;
+      margin-bottom: 8px;
+    }
+    .header p { 
+      color: #0070AD;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    } */
+
+    /* OPTION 3: Corporate banner - horizontal stripe */
+    /* .header { 
+      text-align: center; 
+      margin: 0 0 40px;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      border-radius: 12px;
+    }
+    .header h1 { 
+      font-size: 36px; 
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+    .header p { 
+      color: rgba(255,255,255,0.95);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    } */
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+    }
+    
+    .card h3 {
+      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+    }
+    .card h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      margin-right: 12px;
+      border-radius: 2px;
+    }
+
+    /* Layout */
+    .two-col { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 24px; 
+      margin-bottom: 24px; 
+    }
+    @media (max-width: 1100px){ 
+      .two-col { grid-template-columns: 1fr; } 
+    }
+
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-top: 18px; 
+      margin-bottom: 8px; 
+      color: #34495e; 
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    input[type="number"], select {
+      width: 100%;
+      max-width: 300px;
+      padding: 11px 14px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fafafa;
+      transition: all .2s ease;
+      font-family: inherit;
+    }
+    input[type="number"] {
+      max-width: 140px;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #6bcf7f;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(107,207,127,0.1);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #6bcf7f;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(107,207,127,0.1);
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+      accent-color: #6bcf7f;
+    }
+
+    /* File Upload Styling */
+    .file-upload-wrapper {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 8px;
+    }
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+      border: 2px dashed #d0d0d0;
+      border-radius: 10px;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all .3s ease;
+      font-size: 14px;
+      color: #555;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+    .file-upload-label::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(107,207,127,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    .file-upload-label:hover::before {
+      left: 100%;
+    }
+    .file-upload-label:hover {
+      border-color: #6bcf7f;
+      background: rgba(107,207,126,0.05);
+      color: #2c3e50;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(107,207,127,0.2);
+    }
+    .file-upload-label svg {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      opacity: 0.7;
+    }
+    .file-count {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #7f8c8d;
+      font-weight: 600;
+      padding: 6px 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .file-count.has-files {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 180px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 20px;
+      transition: all .3s ease;
+      color: white;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .btn:hover{ 
+      transform: translateY(-3px); 
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+    .btn:active {
+      transform: translateY(-1px);
+    }
+    .btn-green { background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%); }
+    .btn-red   { background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%); }
+    .btn-full { max-width: 280px; }
+
+    .inline { 
+      display: flex; 
+      gap: 12px; 
+      align-items: center; 
+      flex-wrap: wrap; 
+    }
+
+    .progress { 
+      display: none; 
+      margin-top: 20px; 
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+    }
+    .bar { 
+      height: 12px; 
+      background: #e9ecef; 
+      border-radius: 10px; 
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .fill { 
+      height: 100%; 
+      width: 0%; 
+      background: linear-gradient(90deg, #6bcf7f, #27d383); 
+      transition: width .4s ease;
+      box-shadow: 0 0 10px rgba(107,207,127,0.5);
+    }
+    .ptext { 
+      margin-top: 10px; 
+      font-size: 13px; 
+      font-weight: 700; 
+      color: #27d383; 
+      text-align: center;
+    }
+
+    /* Results */
+    .results { display: block; margin-top: 0px; }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .results-header h3 {
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    
+    table { 
+      width: 100%; 
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 10px; 
+      font-size: 13px;
+      background: white;
+      border-radius: 10px;
+      overflow: visible;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    thead { 
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%); 
+      color: white; 
+    }
+    th { 
+      padding: 16px 14px; 
+      text-align: left; 
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 12px;
+    }
+    td { 
+      padding: 14px 14px; 
+      text-align: left; 
+      border-bottom: 1px solid #f0f0f0;
+      color: #2c3e50;
+    }
+    tbody tr {
+      transition: all 0.2s ease;
+    }
+    tbody tr:hover { 
+      background: rgba(107, 207, 127, 0.05);
+      transform: scale(1.01);
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .file-link {
+      color: #0070AD;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .file-link:hover {
+      color: #12239E;
+      text-decoration: underline;
+    }
+    .score-badge {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+      color: white; 
+      padding: 6px 14px; 
+      border-radius: 20px; 
+      font-weight: 700; 
+      display: inline-block;
+      font-size: 12px;
+      box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+      cursor: pointer;
+    }
+    #scoreTooltip {
+      display: none;
+      position: fixed;
+      background: #1e2a3a;
+      color: #fff;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 99999;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      line-height: 1.9;
+      pointer-events: none;
+    }
+    #scoreTooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1e2a3a;
+    }
+    .small-note { 
+      font-size: 12px; 
+      color: #7f8c8d; 
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 3px solid #6bcf7f;
+    }
+
+    #jdPreview {
+      display: none;
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+      border-left: 4px solid #6bcf7f;
+      height: 220px;
+      box-sizing: border-box;
+      width: 100%;
+      overflow: hidden;
+    }
+    #jdPreview .preview-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0070AD;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #jdPreview .preview-title span {
+      cursor: pointer;
+      color: #95a5a6;
+      font-size: 14px;
+    }
+    #jdPreview .preview-title span:hover { color: #e74c3c; }
+    #jdPreviewContent {
+      font-size: 13px;
+      color: #2c3e50;
+      line-height: 1.7;
+      height: calc(220px - 52px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-wrap: break-word;
+      max-width: 100%;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      animation: fadeIn 0.5s ease;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #27d383, #6bcf7f);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1> 🏢 Bench Marketplace </h1>
+      <p>Parse Resumes • Parse JD • Score • Dynamic Threshold / Top‑N</p>
+      <button onclick="location.href='/ops-dashboard'" style="position: absolute; top: 20px; right: 100px; padding: 8px 16px; background: #6bcf7f; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700;">← Back</button>
+      <button id="logoutBtn" style="position: absolute; top: 20px; right: 20px; padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
+    </div>
+
+    <div class="two-col">
+      <!-- Left Side: Parse Resumes -->
+      <div class="card">
+        <h3>Upload & Parse Resumes</h3>
+
+        <label>Choose Folder</label>
+        <div class="file-upload-wrapper">
+          <label for="folderPicker" class="file-upload-label">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+            </svg>
+            Select Folder
+          </label>
+          <input type="file" id="folderPicker" webkitdirectory multiple style="display:none" />
+          <div class="file-count" id="folderCount">No folder selected</div>
+        </div>
+
+        <label style="margin-top:20px;">Or Choose Files</label>
+        <div class="file-upload-wrapper">
+          <label for="resumeFiles" class="file-upload-label">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+            </svg>
+            Select Files
+          </label>
+          <input type="file" id="resumeFiles" multiple style="display:none" />
+          <div class="file-count" id="fileCount">No files selected</div>
+        </div>
+
+        <label style="margin-top:20px;">
+          <input type="checkbox" id="forceReparseResumes"> Force Reparse
+        </label>
+
+        <div class="inline" style="margin-top:20px; gap:12px;">
+          <button id="btnParseNew" class="btn btn-green" style="margin:0;">➕ Parse New</button>
+          <button id="btnParseUpdated" class="btn btn-red" style="margin:0;">🔄 Parse Updated</button>
+        </div>
+
+        <div class="small-note" id="detectStatus" style="margin-top:10px; display:none;"></div>
+
+        <div class="small-note" id="resumeParsingStatus" style="margin-top:12px;">Ready to parse resumes</div>
+
+        <div class="progress" id="resProg">
+          <div class="bar"><div class="fill" id="resFill"></div></div>
+          <div class="ptext" id="resText">Waiting...</div>
+        </div>
+      </div>
+
+      <!-- Right Side: Parse JD + Score -->
+      <div class="card">
+        <h3>Select & Upload JD</h3>
+
+        <label>Existing JD (from data/jds)</label>
+        <div class="inline" style="gap:10px; width: 100%;">
+          <select id="jdSelect" style="flex:1; max-width: none;"></select>
+          <button id="refreshJDList" class="btn btn-green" style="width:auto; margin:0; max-width: 120px; padding: 11px 16px;">Refresh</button>
+        </div>
+
+        <label style="margin-top:20px;">Or Upload New JD</label>
+        <div class="file-upload-wrapper">
+          <label for="jdFile" class="file-upload-label">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+            Upload JD File
+          </label>
+          <input type="file" id="jdFile" style="display:none" />
+          <div class="file-count" id="jdFileCount">No file selected</div>
+        </div>
+
+        <label style="margin-top:20px;">Or Write JD Description</label>
+        <textarea id="jdText" placeholder="Paste or type the job description here..." style="width:100%; max-width:100%; min-height:150px; padding:12px; border:2px solid #e8e8e8; border-radius:8px; font-size:14px; font-family:inherit; background:#fafafa; resize:vertical; transition:all .2s ease;"></textarea>
+
+        <button id="btnParseJD" class="btn btn-red" style="margin-top:20px;">Parse JD</button>
+
+        <!-- JD Preview -->
+        <div id="jdPreview">
+          <div class="preview-title">
+            📄 JD Preview
+            <span onclick="clearJDPreview()" title="Clear preview">✕</span>
+          </div>
+          <div id="jdPreviewContent"></div>
+        </div>
+
+        <div class="small-note" id="scoreProgress">Ready to parse JD</div>
+
+        <h3 style="margin-top:32px;">Score Resumes</h3>
+
+        <div class="inline" style="gap:16px; align-items:flex-end;">
+          <div>
+            <label style="margin:0 0 8px 0;">Threshold Score</label>
+            <div style="position:relative; display:inline-block;">
+              <input id="threshold" type="number" value="5" min="0" max="100" style="width:80px; padding-right:24px;">
+              <span style="position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:#7f8c8d; pointer-events:none;">%</span>
+            </div>
+          </div>
+          <div style="margin-left:16px;">
+            <label style="margin:0 0 8px 0;">Top‑N</label>
+            <input id="topN" type="number" value="10" style="width:80px;">
+          </div>
+          <button id="btnScore" class="btn btn-red" style="margin:0;">Score</button>
+        </div>
+        
+        <div class="small-note" id="scoringProgress" style="margin-top:12px;">Ready to score resumes</div>
+      </div>
+    </div>
+
+    <!-- Results Section Below -->
+    <div class="card">
+      <div class="results-header">
+        <h3>Results</h3>
+        <button id="btnDownloadFiltered" class="btn btn-green btn-full" style="margin:0;">
+          📥 Download Excel
+        </button>
+      </div>
+
+      <div class="results">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 8%;">Rank</th>
+              <th style="width: 12%;">ID</th>
+              <th style="width: 20%;">Name</th>
+              <th style="width: 10%;">Exp</th>
+              <th style="width: 12%;">Score</th>
+              <th style="width: 38%;">File</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <tr>
+              <td colspan="6" style="padding:40px; text-align:center; color:#95a5a6;">
+                No results yet. Upload resumes and JD, then click Score to see results.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="scoreTooltip"></div>
+
+  <script>
+    // ---------- Score tooltip ----------
+    const tooltip = document.getElementById('scoreTooltip');
+
+    document.addEventListener('mouseover', (e) => {
+      const badge = e.target.closest('.score-badge');
+      if (!badge) return;
+      const d = badge.dataset;
+      tooltip.innerHTML = `
+        <strong>Score Breakdown</strong><br>
+        🎯 Role Score &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.role}<br>
+        🎓 Grade Score &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.grade}<br>
+        📍 Location Score &nbsp;&nbsp;&nbsp;: ${d.location}<br>
+        🏢 Domain Score &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.domain}<br>
+        📅 Experience Score &nbsp;: ${d.experience}<br>
+        📁 Project Score &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.project}<br>
+        🔧 Mandatory Skills &nbsp;&nbsp;: ${d.mandatory}<br>
+        ✨ Nice-to-have &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.nicetohave}<br>
+        🤝 Soft Skills &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${d.soft}<br>
+        📋 Responsibilities &nbsp;&nbsp;: ${d.responsibilities}
+      `;
+      tooltip.style.display = 'block';
+      positionTooltip(badge);
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('.score-badge')) tooltip.style.display = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (tooltip.style.display === 'none') return;
+      if (e.target.closest('.score-badge')) positionTooltip(e.target.closest('.score-badge'));
+    });
+
+    function positionTooltip(badge) {
+      const rect = badge.getBoundingClientRect();
+      const tw = tooltip.offsetWidth;
+      let left = rect.left + rect.width / 2 - tw / 2;
+      let top = rect.top - tooltip.offsetHeight - 10;
+      if (top < 8) top = rect.bottom + 10;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+    // ---------- Load JD list on page load ----------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadJDList();
+    });
+
+    // ---------- File upload handlers ----------
+    const folderInput = document.getElementById("folderPicker");
+    const resumeInput = document.getElementById("resumeFiles");
+    const jdFileInput = document.getElementById("jdFile");
+    const folderCount = document.getElementById("folderCount");
+    const fileCount = document.getElementById("fileCount");
+    const jdFileCount = document.getElementById("jdFileCount");
+
+    folderInput.addEventListener("change", (e) => {
+      const picked = Array.from(e.target.files || []);
+      if (!picked.length) return;
+      const dt = new DataTransfer();
+      for (const f of Array.from(resumeInput.files || [])) dt.items.add(f);
+      for (const f of picked) dt.items.add(f);
+      resumeInput.files = dt.files;
+      folderCount.textContent = `✓ ${picked.length} files from folder`;
+      folderCount.classList.add('has-files');
+      updateFileCount();
+    });
+
+    resumeInput.addEventListener("change", (e) => {
+      updateFileCount();
+    });
+
+    jdFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        jdFileCount.textContent = `✓ ${file.name}`;
+        jdFileCount.classList.add('has-files');
+        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+          const reader = new FileReader();
+          reader.onload = (ev) => showJDPreview(ev.target.result);
+          reader.readAsText(file);
+        } else {
+          showJDPreview(`📄 File selected: ${file.name}\n\nContent preview is available for .txt files.\nFor .pdf / .docx files, content will be extracted during parsing.`);
+        }
+      } else {
+        jdFileCount.textContent = "No file selected";
+        jdFileCount.classList.remove('has-files');
+        clearJDPreview();
+      }
+    });
+
+    // Preview on dropdown select
+    document.getElementById("jdSelect").addEventListener("change", async (e) => {
+      const selected = e.target.value;
+      if (!selected) { clearJDPreview(); return; }
+      try {
+        const res = await fetch(`/api/jd/raw?name=${encodeURIComponent(selected)}`);
+        if (res.ok) {
+          const data = await res.json();
+          showJDPreview(data.text || `📄 Selected: ${selected}`);
+        } else {
+          showJDPreview(`📄 Selected: ${selected}\n\nCould not load preview.`);
+        }
+      } catch { showJDPreview(`📄 Selected: ${selected}\n\nCould not load preview.`); }
+    });
+
+    // Preview on textarea input
+    document.getElementById("jdText").addEventListener("input", (e) => {
+      const text = e.target.value.trim();
+      if (text) showJDPreview(text);
+      else clearJDPreview();
+    });
+
+    function showJDPreview(text) {
+      document.getElementById('jdPreview').style.display = 'block';
+      document.getElementById('jdPreviewContent').textContent = text;
+    }
+
+    function clearJDPreview() {
+      document.getElementById('jdPreview').style.display = 'none';
+      document.getElementById('jdPreviewContent').textContent = '';
+    }
+
+    function updateFileCount() {
+      const count = resumeInput.files.length;
+      if (count === 0) {
+        fileCount.textContent = "No files selected";
+        fileCount.classList.remove('has-files');
+      } else {
+        fileCount.textContent = `✓ ${count} file${count > 1 ? 's' : ''} selected`;
+        fileCount.classList.add('has-files');
+      }
+    }
+
+    // ---------- Resume parsing with progress ----------
+    const resProg = document.getElementById("resProg");
+    const resFill = document.getElementById("resFill");
+    const resText = document.getElementById("resText");
+
+    async function startParsing(parse_mode) {
+      const files = resumeInput.files;
+      if (!files.length) { 
+        alert("⚠️ Please select resumes first"); 
+        return; 
+      }
+
+      const resumeParsingStatus = document.getElementById("resumeParsingStatus");
+      const detectStatus = document.getElementById("detectStatus");
+
+      // Show detection info first
+      try {
+        const det = await fetch("/api/resumes/detect-updated").then(r => r.json());
+        detectStatus.style.display = 'block';
+        if (parse_mode === 'new') {
+          detectStatus.textContent = `🔍 Detected: ${det.new.length} new, ${det.updated.length} updated. Parsing ${det.new.length} new resumes...`;
+        } else {
+          detectStatus.textContent = `🔍 Detected: ${det.new.length} new, ${det.updated.length} updated. Parsing ${det.updated.length} updated resumes...`;
+        }
+      } catch(e) {}
+
+      resProg.style.display = 'block';
+      resFill.style.width = '10%';
+      resText.textContent = '⏳ Uploading & starting parsing...';
+      resumeParsingStatus.textContent = '⏳ Parsing in progress...';
+
+      const fd = new FormData();
+      for (let f of files) fd.append("resumes", f);
+      fd.append("force_reparse", document.getElementById("forceReparseResumes").checked ? "1" : "0");
+      fd.append("parse_mode", parse_mode);
+
+      const resp = await fetch("/api/resumes/parse", { method: "POST", body: fd });
+      const data = await resp.json();
+      if (!resp.ok) { 
+        alert("❌ " + (data.error || "Failed to start resume parsing")); 
+        resumeParsingStatus.textContent = '❌ Parsing failed';
+        return; 
+      }
+
+      await pollJob(data.job_id, (st) => {
+        const pct = Math.min(95, st.progress || 0);
+        resFill.style.width = `${pct}%`;
+        resText.textContent = st.message || "Processing...";
+        if ((st.status || "").toLowerCase() === "running" && (st.progress || 0) < 50) {
+          const curr = parseInt(resFill.style.width) || 10;
+          if (curr < 45) resFill.style.width = `${curr + 1}%`;
+        }
+      }).then((result) => {
+        resFill.style.width = '100%';
+        resText.textContent = '✅ Resume parsing completed!';
+        resumeParsingStatus.textContent = `✅ Parsing completed! (${parse_mode === 'updated' ? 'Updated resumes archived & overwritten' : 'New resumes added to pool'})`;
+        setTimeout(() => { resProg.style.display = 'none'; }, 2000);
+      });
+    }
+
+    document.getElementById("btnParseNew").onclick = () => startParsing('new');
+    document.getElementById("btnParseUpdated").onclick = () => startParsing('updated');
+
+    // ---------- JD list ----------
+    async function loadJDList(){
+      try {
+        const resp = await fetch("/api/jds/list");
+        const data = await resp.json();
+        const sel = document.getElementById("jdSelect");
+        sel.innerHTML = "";
+        const placeholder = document.createElement("option");
+        placeholder.value = ""; placeholder.textContent = "— Select JD or upload new —";
+        sel.appendChild(placeholder);
+        (data.jds || []).forEach(n => {
+          const opt = document.createElement("option");
+          opt.value = n; opt.textContent = n;
+          sel.appendChild(opt);
+        });
+        if ((data.jds || []).length === 0) {
+          const opt = document.createElement("option");
+          opt.value = ""; opt.textContent = "No JDs found in data/jds";
+          sel.appendChild(opt);
+        }
+      } catch(e) {
+        console.error("JD list error:", e);
+      }
+    }
+    document.getElementById("refreshJDList").onclick = () => { loadJDList(); clearJDPreview(); };
+
+    // ---------- JD parse ----------
+    document.getElementById("btnParseJD").onclick = async () => {
+      const selected = document.getElementById("jdSelect").value || "";
+      const file = jdFileInput.files[0] || null;
+      const jdText = document.getElementById("jdText").value.trim();
+
+      const scoreProgress = document.getElementById("scoreProgress");
+      scoreProgress.style.display = 'block';
+
+      const fd = new FormData();
+      fd.append("jd_selected", selected);
+      if (file) fd.append("jd_file", file);
+      if (jdText) fd.append("jd_text", jdText);
+
+      const resp = await fetch("/api/jd/parse", { method:"POST", body: fd });
+      const data = await resp.json();
+      if (!resp.ok) { 
+        alert("❌ " + (data.error || "Failed to start JD parsing")); 
+        return; 
+      }
+
+      await pollJob(data.job_id, (st) => {
+        scoreProgress.textContent = "⏳ " + (st.message || "Processing JD...");
+      }).then(async () => {
+        scoreProgress.textContent = "✅ JD parsed successfully!";
+        // Load preview after parsing
+        const jdName = data.jd_file || "";
+        if (jdName) {
+          try {
+            const pr = await fetch(`/api/jd/raw?name=${encodeURIComponent(jdName)}`);
+            if (pr.ok) { const pd = await pr.json(); showJDPreview(pd.text || jdName); }
+          } catch {}
+        }
+      });
+    };
+
+    // ---------- Scoring ----------
+    let ALL_RESULTS = [];
+    let JD_JSON = null;
+
+    document.getElementById("btnScore").onclick = async () => {
+      const scoringProgress = document.getElementById("scoringProgress");
+
+      const fd = new FormData();
+      fd.append("top_n", "10000");
+
+      const resp = await fetch("/api/score", { method:"POST", body: fd });
+      const data = await resp.json();
+      if (!resp.ok) { 
+        alert("❌ " + (data.error || "Failed to start scoring")); 
+        return; 
+      }
+
+      await pollJob(data.job_id, (st) => {
+        scoringProgress.textContent = "⏳ " + (st.message || "Scoring...");
+      }).then((result) => {
+        ALL_RESULTS = result.results || [];
+        JD_JSON = result.jd_json || {};
+        scoringProgress.textContent = "✅ Scoring completed!";
+        applyFilters();
+      });
+    };
+
+    function applyFilters() {
+      let thresholdRaw = parseInt(document.getElementById("threshold").value) || 0;
+      if (thresholdRaw > 100) {
+        alert("⚠️ Threshold cannot exceed 100%.");
+        document.getElementById("threshold").value = 100;
+        thresholdRaw = 100;
+      }
+      if (thresholdRaw < 0) {
+        document.getElementById("threshold").value = 0;
+        thresholdRaw = 0;
+      }
+      const threshold = thresholdRaw;
+      const topN = parseInt(document.getElementById("topN").value) || ALL_RESULTS.length;
+
+      let filtered = ALL_RESULTS.filter(r => (r.total_score || 0) >= threshold);
+      filtered.sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
+      filtered = filtered.slice(0, topN);
+      filtered.forEach((r, i) => r.rank = i + 1);
+
+      renderResults(filtered);
+      return filtered;
+    }
+    document.getElementById("threshold").oninput = applyFilters;
+    document.getElementById("topN").oninput = applyFilters;
+
+    function renderResults(rows) {
+      const body = document.getElementById("resultsBody");
+      body.innerHTML = "";
+
+      if (!rows.length) {
+        body.innerHTML = "<tr><td colspan='6' style='padding:40px;text-align:center;color:#95a5a6;'>No matches found. Try adjusting threshold or top-N values.</td></tr>";
+        return;
+      }
+
+      body.innerHTML = rows.map(r => `
+        <tr>
+          <td><strong>${r.rank}</strong></td>
+          <td>${r.employee_ID ?? r.resume_emp_id ?? "-"}</td>
+          <td><strong>${r.employee_name ?? r.resume_name ?? "-"}</strong></td>
+          <td>${r.total_experience_years ?? "-"}</td>
+          <td>
+            <span class="score-badge"
+              data-role="${r.role_score ?? 0}"
+              data-grade="${r.grade_score ?? 0}"
+              data-location="${r.location_score ?? 0}"
+              data-domain="${r.domain_score ?? 0}"
+              data-experience="${r.experience_score ?? 0}"
+              data-project="${r.project_score ?? 0}"
+              data-mandatory="${r.mandatory_skill_score ?? 0}"
+              data-nicetohave="${r.nice_to_have_skill_score ?? 0}"
+              data-soft="${r.soft_skill_score ?? 0}"
+              data-responsibilities="${r.responsibilities_score ?? 0}">
+              ${r.total_score ?? 0}
+            </span>
+          </td>
+          <td><a href="#" class="file-link" data-file="${r.file_path ?? ""}" title="Click to open: ${r.file_name ?? r.resume_source ?? ""}">${r.file_name ?? r.resume_source ?? "-"}</a></td>
+        </tr>
+      `).join('');
+      
+      // Add click handlers to file links
+      document.querySelectorAll('.file-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const filePath = e.target.getAttribute('data-file');
+          if (filePath && filePath !== '-' && filePath !== '') {
+            fetch(`/api/open-file?path=${encodeURIComponent(filePath)}`)
+              .then(resp => resp.json())
+              .then(data => {
+                if (data.error) {
+                  alert('❌ Failed to open file: ' + data.error);
+                }
+              })
+              .catch(err => {
+                alert('❌ Error opening file: ' + err.message);
+              });
+          }
+        });
+      });
+    }
+
+    // ---------- Polling helper ----------
+    async function pollJob(job_id, onUpdate){
+      while (true) {
+        const s = await fetch(`/api/job/${job_id}/status`).then(r => r.json());
+        onUpdate && onUpdate(s);
+        if (s.status === 'done' || s.status === 'error') break;
+        await new Promise(r => setTimeout(r, 800));
+      }
+      const res = await fetch(`/api/job/${job_id}/result`).then(r => r.json());
+      return res;
+    }
+
+    // ---------- Download filtered Excel ----------
+    document.getElementById("btnDownloadFiltered").onclick = async () => {
+      const filtered = applyFilters();
+      const threshold = document.getElementById("threshold").value;
+      const topN = document.getElementById("topN").value;
+
+      const resp = await fetch("/api/export/filtered", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          threshold, top_n: topN,
+          results: filtered,
+          jd_json: JD_JSON
+        })
+      });
+
+      if (!resp.ok) { 
+        alert("❌ Failed to export filtered Excel"); 
+        return; 
+      }
+
+      const blob = await resp.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `filtered_results_${threshold}_${topN}.xlsx`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    };
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      const response = await fetch('/api/logout', { method: 'POST' });
+      const result = await response.json();
+      if (result.redirect) {
+        window.location.href = result.redirect;
+      }
+    });
+  </script>
+</body>
+</html>

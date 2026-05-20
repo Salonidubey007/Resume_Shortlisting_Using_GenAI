@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Details</title>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid #f0f0f0;
+    }
+    .card-header h2 {
+      color: #12239E;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header h2::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #6bcf7f, #27d383);
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .btn-back {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 14px;
+    }
+    thead {
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+      color: white;
+    }
+    th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 12px;
+    }
+    th:first-child { border-radius: 8px 0 0 0; }
+    th:last-child  { border-radius: 0 8px 0 0; }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #2c3e50;
+    }
+    tbody tr { transition: background 0.2s; cursor: pointer; }
+    tbody tr:hover { background: rgba(107, 207, 127, 0.15); }
+    tbody tr:last-child td { border-bottom: none; }
+    .search-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 180px;
+      position: relative;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 9px 14px 9px 36px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .search-wrap input:focus { border-color: #6bcf7f; }
+    .search-wrap::before {
+      content: '\1F50D';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      pointer-events: none;
+    }
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.2s;
+      user-select: none;
+    }
+    .filter-pill input[type=checkbox] { display: none; }
+    .filter-pill.pill-bench     { background: #fff3cd; color: #856404; border-color: #ffe69c; }
+    .filter-pill.pill-allocated { background: #cfe2ff; color: #084298; border-color: #9ec5fe; }
+    .filter-pill.pill-nondep    { background: #f8d7da; color: #721c24; border-color: #f1aeb5; }
+    .filter-pill.pill-bench.active     { border-color: #856404; box-shadow: 0 0 0 2px rgba(133,100,4,0.2); }
+    .filter-pill.pill-allocated.active { border-color: #084298; box-shadow: 0 0 0 2px rgba(8,66,152,0.2); }
+    .filter-pill.pill-nondep.active    { border-color: #721c24; box-shadow: 0 0 0 2px rgba(114,28,36,0.2); }
+    .no-results { text-align: center; padding: 24px; color: #aaa; font-size: 14px; display: none; }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .badge-bench          { background: #fff3cd; color: #856404; }
+    .badge-active         { background: #d1e7dd; color: #0f5132; }
+    .badge-allocated      { background: #cfe2ff; color: #084298; }
+    .badge-non-deployable { background: #f8d7da; color: #721c24; }
+    tbody tr.non-deployable { background: #fff0f0 !important; }
+    tbody tr.non-deployable:hover { background: #ffe0e0 !important; }
+    .btn-logout {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 999;
+      transition: 0.3s;
+    }
+    .btn-logout:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+  <button class="btn-logout" onclick="logout()">Logout</button>
+  <div class="card">
+    <div class="card-header">
+      <h2>Bench Profiles</h2>
+      <button class="btn-back" onclick="location.href='/ops-dashboard'">← Back</button>
+    </div>
+
+    <div class="search-filter-bar">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search by name, GG ID, status..." oninput="applyFilters()">
+      </div>
+      <div class="filter-pills">
+        <label class="filter-pill pill-bench" id="pill-bench">
+          <input type="checkbox" onchange="applyFilters()"> Bench
+        </label>
+        <label class="filter-pill pill-allocated" id="pill-allocated">
+          <input type="checkbox" onchange="applyFilters()"> Allocated
+        </label>
+        <label class="filter-pill pill-nondep" id="pill-nondep">
+          <input type="checkbox" onchange="applyFilters()"> Non-Deployable
+        </label>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>SN</th>
+          <th>GG ID</th>
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Blocking End Date</th>
+        </tr>
+      </thead>
+      <tbody id="empTableBody">
+        {% for user in users %}
+        <tr onclick="location.href='/employee-profile?gg_id={{ user.employee_id }}'">
+          <td>{{ loop.index }}</td>
+          <td>{{ user.employee_id }}</td>
+          <td>{{ user.full_name }}</td>
+          <td id="status-{{ user.employee_id }}"><span class="badge badge-bench">Bench</span></td>
+          <td id="release-{{ user.employee_id }}">—</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="no-results" id="noResults">No matching employees found.</div>
+  </div>
+  <script>
+    // sync status from profile page via localStorage
+    function syncFromProfile(ggId) {
+      let status      = localStorage.getItem(`emp_${ggId}_status`);
+      let releaseDate = localStorage.getItem(`emp_${ggId}_releaseDate`);
+
+      // Auto-release: if blocking end date has passed today, override to Bench
+      const today = new Date().toISOString().slice(0, 10);
+      if (status === 'Allocated' && releaseDate && releaseDate < today) {
+        status = 'Bench';
+        releaseDate = '';
+        localStorage.setItem(`emp_${ggId}_status`, 'Bench');
+        localStorage.setItem(`emp_${ggId}_releaseDate`, '');
+      }
+
+      if (status) {
+        const cls = status === 'Allocated'      ? 'badge-allocated'
+                  : status === 'Bench'          ? 'badge-bench'
+                  : status === 'Non-Deployable' ? 'badge-non-deployable'
+                  : 'badge-active';
+        const el = document.getElementById(`status-${ggId}`);
+        if (el) {
+          el.innerHTML = `<span class="badge ${cls}">${status}</span>`;
+          const row = el.closest('tr');
+          if (status === 'Non-Deployable') row.classList.add('non-deployable');
+          else row.classList.remove('non-deployable');
+        }
+      }
+      if (releaseDate) {
+        const el = document.getElementById(`release-${ggId}`);
+        if (el) el.textContent = releaseDate;
+      }
+    }
+    {% for user in users %}
+    syncFromProfile('{{ user.employee_id }}');
+    {% endfor %}
+
+    function applyFilters() {
+      const q        = document.getElementById('searchInput').value.trim().toLowerCase();
+      const chkBench = document.querySelector('#pill-bench input').checked;
+      const chkAlloc = document.querySelector('#pill-allocated input').checked;
+      const chkNonDep= document.querySelector('#pill-nondep input').checked;
+
+      document.getElementById('pill-bench').classList.toggle('active', chkBench);
+      document.getElementById('pill-allocated').classList.toggle('active', chkAlloc);
+      document.getElementById('pill-nondep').classList.toggle('active', chkNonDep);
+
+      let visible = 0;
+      document.querySelectorAll('#empTableBody tr').forEach(tr => {
+        const rowText = tr.textContent.toLowerCase();
+        const badge   = tr.querySelector('.badge');
+        const status  = badge ? badge.textContent.trim() : 'Bench';
+
+        const matchSearch = !q || rowText.includes(q);
+        const noneSelected = !chkBench && !chkAlloc && !chkNonDep;
+      const matchFilter = noneSelected
+                         || (status === 'Bench'          && chkBench)
+                         || (status === 'Allocated'      && chkAlloc)
+                         || (status === 'Non-Deployable' && chkNonDep);
+
+        const show = matchSearch && matchFilter;
+        tr.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    async function logout() {
+      const res = await fetch('/api/logout', { method: 'POST' });
+      const data = await res.json();
+      window.location.href = data.redirect || '/';
+    }
+  </script>
+</body>
+</html>

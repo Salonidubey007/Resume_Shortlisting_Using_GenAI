@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login | Resume Shortlisting System</title>
+  <meta charset="UTF-8">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #12239E 0%, #0070AD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 40px 50px;
+      border-radius: 16px;
+      width: 420px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      color: #12239E;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #0070AD;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+      color: white;
+    }
+
+    .btn-employee {
+      background: linear-gradient(135deg, #6bcf7f 0%, #27d383 100%);
+    }
+
+    .btn-opsteam {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="card">
+  <h1 style="color:#12239E">Welcome</h1>
+  <p style="color:#0070AD">Choose how you want to start</p>
+
+  <!-- SIMPLE NORMAL BUTTONS -->
+  
+  <button class="btn-employee" onclick="location.href='/login?role=employee-portal'">Employee</button>
+  <button class="btn-opsteam" onclick="location.href='/login?role=opsteam'">OPS Team</button>
+  </div>
+
+</body>
+</html>
